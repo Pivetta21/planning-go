@@ -1,0 +1,12 @@
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+__debug_bin
+/build/bin
+config.production.yaml
+coverage.html
