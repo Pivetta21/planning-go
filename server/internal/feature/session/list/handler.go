@@ -6,7 +6,11 @@ import (
 )
 
 func HandleList(w http.ResponseWriter, r *http.Request) {
-	userSessions, err := ExecuteList(r.Context())
+	sessionList := SessionList{
+		Context: r.Context(),
+	}
+
+	userSessions, err := sessionList.Execute()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return

@@ -1,14 +1,16 @@
 package auth
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/Pivetta21/planning-go/internal/data/entity"
+	"github.com/Pivetta21/planning-go/internal/infra/db"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (u *Register) Execute(in *RegisterInput) (*RegisterOutput, error) {
-	hashedPassword, err := u.hashPassword(in.Password)
+func (f *Register) Execute(in *RegisterInput) (*RegisterOutput, error) {
+	hashedPassword, err := f.hashPassword(in.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -18,8 +20,21 @@ func (u *Register) Execute(in *RegisterInput) (*RegisterOutput, error) {
 		return nil, err
 	}
 
-	_, err = u.UserRepository.Save(u.Context, user)
-	if err != nil {
+	queryCtx, cancel := context.WithTimeout(f.Context, db.Ctx.DefaultTimeout)
+	defer cancel()
+
+	row := db.Ctx.Conn.QueryRowContext(
+		queryCtx,
+		`
+		INSERT INTO public.users (username, password)
+		VALUES ($1, $2) 
+		RETURNING id
+		`,
+		user.Username, user.Password,
+	)
+
+	var lastInsertedId int64
+	if err := row.Scan(&lastInsertedId); err != nil {
 		return nil, err
 	}
 
@@ -30,7 +45,7 @@ func (u *Register) Execute(in *RegisterInput) (*RegisterOutput, error) {
 	return out, err
 }
 
-func (u *Register) hashPassword(password string) (string, error) {
+func (f *Register) hashPassword(password string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(hash), err
 }

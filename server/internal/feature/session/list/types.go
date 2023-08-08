@@ -1,6 +1,7 @@
 package session
 
 import (
+	"context"
 	"time"
 
 	"github.com/Pivetta21/planning-go/internal/data/enum"
@@ -9,10 +10,14 @@ import (
 type SessionModel struct {
 	Id                int64              `json:"-"`
 	Identifier        string             `json:"identifier"`
-	ExpiresAt         time.Time          `json:"expiresAt"`
 	Origin            enum.SessionOrigin `json:"-"`
 	OriginDescription string             `json:"origin"`
 	CreatedAt         time.Time          `json:"createdAt"`
+	Active            bool               `json:"active"`
 }
 
 type SessionListOutput []SessionModel
+
+type SessionList struct {
+	context.Context
+}

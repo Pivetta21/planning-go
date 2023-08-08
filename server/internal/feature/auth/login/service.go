@@ -1,26 +1,29 @@
 package auth
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/Pivetta21/planning-go/internal/core"
 	"github.com/Pivetta21/planning-go/internal/data/entity"
 	"github.com/Pivetta21/planning-go/internal/data/enum"
+	"github.com/Pivetta21/planning-go/internal/infra/db"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (u *Login) Execute(in *LoginInput) (*LoginOutput, error) {
+func (f *Login) Execute(in *LoginInput) (*LoginOutput, error) {
 	obfuscatedErr := errors.New("please check your credentials")
 
-	user, err := u.fetchUser(in.Username, in.Password)
+	user, err := f.fetchUser(in.Username, in.Password)
 	if err != nil {
 		return nil, obfuscatedErr
 	}
 
-	userSession, err := u.persistUserSession(user.Id, in.Origin)
+	userSession, err := f.persistUserSession(user.Id, in.Origin)
 	if err != nil {
 		return nil, obfuscatedErr
 	}
@@ -42,37 +45,60 @@ func (u *Login) Execute(in *LoginInput) (*LoginOutput, error) {
 	return out, nil
 }
 
-func (u *Login) fetchUser(username, password string) (*entity.User, error) {
-	user, err := u.UserRepository.GetByUsername(u.Context, username)
-	if err != nil {
+func (f *Login) fetchUser(username, password string) (*entity.User, error) {
+	queryCtx, cancel := context.WithTimeout(f.Context, db.Ctx.DefaultTimeout)
+	defer cancel()
+
+	row := db.Ctx.Conn.QueryRowContext(
+		queryCtx,
+		`
+		SELECT id, username, password, created_at
+		FROM public.users
+		WHERE username = $1
+		`,
+		strings.ToLower(username),
+	)
+
+	var user entity.User
+	if err := row.Scan(&user.Id, &user.Username, &user.Password, &user.CreatedAt); err != nil {
 		return nil, err
 	}
 
-	passwordMatches := u.checkPassword(password, user.Password)
+	passwordMatches := f.checkPassword(password, user.Password)
 	if !passwordMatches {
-		return nil, err
+		return nil, errors.New("please check your credentials")
 	}
 
-	return user, nil
+	return &user, nil
 }
 
-func (u *Login) checkPassword(password string, hashedPassword string) bool {
+func (f *Login) checkPassword(password string, hashedPassword string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 	return err == nil
 }
 
-func (u *Login) persistUserSession(userId int64, origin enum.SessionOrigin) (*entity.UserSession, error) {
+func (f *Login) persistUserSession(userId int64, origin enum.SessionOrigin) (*entity.UserSession, error) {
 	userSession, err := entity.NewUserSession(0, userId, core.CookieDurationAuthSession, uuid.New(), origin)
 	if err != nil {
 		return nil, err
 	}
 
-	id, err := u.UserSessionRepository.Save(u.Context, userSession)
-	if err != nil {
+	queryCtx, cancel := context.WithTimeout(f.Context, db.Ctx.DefaultTimeout)
+	defer cancel()
+
+	row := db.Ctx.Conn.QueryRowContext(
+		queryCtx,
+		`
+		INSERT INTO public.user_sessions(user_id, identifier, opaque_token, origin, expires_at) 
+		VALUES ($1, $2, $3, $4, $5) 
+		RETURNING id
+		`,
+		userSession.UserId, userSession.Identifier, userSession.OpaqueToken, userSession.Origin, userSession.ExpiresAt,
+	)
+
+	if err := row.Scan(&userSession.Id); err != nil {
 		return nil, err
 	}
-
-	userSession.Id = id
 
 	return userSession, nil
 }

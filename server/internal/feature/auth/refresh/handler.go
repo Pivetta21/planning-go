@@ -4,8 +4,6 @@ import (
 	"net/http"
 
 	"github.com/Pivetta21/planning-go/internal/core"
-	"github.com/Pivetta21/planning-go/internal/infra/db"
-	"github.com/Pivetta21/planning-go/internal/repository"
 	"github.com/google/uuid"
 )
 
@@ -22,8 +20,9 @@ func HandleRefresh(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userSessionRepository := repository.NewUserSessionRepository(db.Ctx)
-	refresh := NewRefresh(r.Context(), userSessionRepository)
+	refresh := Refresh{
+		Context: r.Context(),
+	}
 
 	out, err := refresh.Execute(opaqueToken)
 	if err != nil {

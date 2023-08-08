@@ -2,14 +2,12 @@ package auth
 
 import (
 	"net/http"
-
-	"github.com/Pivetta21/planning-go/internal/infra/db"
-	"github.com/Pivetta21/planning-go/internal/repository"
 )
 
 func HandleLogout(w http.ResponseWriter, r *http.Request) {
-	userSessionRepository := repository.NewUserSessionRepository(db.Ctx)
-	logout := NewLogout(r.Context(), userSessionRepository)
+	logout := Logout{
+		Context: r.Context(),
+	}
 
 	out, err := logout.Execute()
 	if err != nil {

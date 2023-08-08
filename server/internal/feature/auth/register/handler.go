@@ -3,9 +3,6 @@ package auth
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/Pivetta21/planning-go/internal/infra/db"
-	"github.com/Pivetta21/planning-go/internal/repository"
 )
 
 func HandleRegister(w http.ResponseWriter, r *http.Request) {
@@ -15,8 +12,9 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userRepository := repository.NewUserRepository(db.Ctx)
-	register := NewRegister(r.Context(), userRepository)
+	register := Register{
+		Context: r.Context(),
+	}
 
 	out, err := register.Execute(&in)
 	if err != nil {

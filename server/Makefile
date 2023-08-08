@@ -15,6 +15,9 @@ run:
 test:
 	go test -v ./... -count=1
 
+image:
+	docker build -t planninggo .
+
 postgres:
 	docker run --name postgres15 -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=1234 -d postgres:15.3-alpine
 
@@ -24,4 +27,4 @@ create-db:
 drop-db:
 	docker exec -it postgres15 dropdb planning_go
 
-.PHONY: build start run postgres create-db drop-db
+.PHONY: build start run test image postgres create-db drop-db

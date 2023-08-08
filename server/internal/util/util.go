@@ -4,7 +4,10 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/hex"
+	"errors"
+	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
@@ -22,4 +25,13 @@ func GenerateCode() (string, error) {
 	}
 
 	return hex.EncodeToString(b), nil
+}
+
+func ExtractPathParameter(r *http.Request, pattern string) (string, error) {
+	param := chi.URLParam(r, pattern)
+	if param == "" {
+		return "", errors.New("malformed request")
+	}
+
+	return param, nil
 }

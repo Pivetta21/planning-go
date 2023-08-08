@@ -3,9 +3,6 @@ package auth
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/Pivetta21/planning-go/internal/infra/db"
-	"github.com/Pivetta21/planning-go/internal/repository"
 )
 
 func HandleLogin(w http.ResponseWriter, r *http.Request) {
@@ -15,9 +12,9 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userRepository := repository.NewUserRepository(db.Ctx)
-	userSessionRepository := repository.NewUserSessionRepository(db.Ctx)
-	login := NewLogin(r.Context(), userRepository, userSessionRepository)
+	login := Login{
+		Context: r.Context(),
+	}
 
 	out, err := login.Execute(&in)
 	if err != nil {

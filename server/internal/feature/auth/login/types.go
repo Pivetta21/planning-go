@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/Pivetta21/planning-go/internal/data/enum"
-	"github.com/Pivetta21/planning-go/internal/repository"
 )
 
 type LoginInput struct {
@@ -20,19 +19,5 @@ type LoginOutput struct {
 }
 
 type Login struct {
-	Context               context.Context
-	UserRepository        repository.IUserRepository
-	UserSessionRepository repository.IUserSessionRepository
-}
-
-func NewLogin(
-	ctx context.Context,
-	userRepository *repository.UserRepository,
-	userSessionRepository *repository.UserSessionRepository,
-) *Login {
-	return &Login{
-		Context:               ctx,
-		UserRepository:        userRepository,
-		UserSessionRepository: userSessionRepository,
-	}
+	context.Context
 }
