@@ -16,12 +16,12 @@ func (f *SessionDelete) Execute(identifier string) error {
 		return errors.New("cannot delete current session, please logout")
 	}
 
-	ctx, cancel := context.WithTimeout(f.Context, db.Ctx.DefaultTimeout)
+	queryCtx, cancel := context.WithTimeout(f.Context, db.Ctx.DefaultTimeout)
 	defer cancel()
 
 	var deletedId int64
 	row := db.Ctx.Conn.QueryRowContext(
-		ctx,
+		queryCtx,
 		`
 		DELETE FROM public.user_sessions 
 		WHERE user_id = $1 AND identifier = $2

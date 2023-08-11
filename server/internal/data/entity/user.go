@@ -7,10 +7,11 @@ import (
 )
 
 type User struct {
-	Id        int64
-	Username  string
-	Password  string
-	CreatedAt time.Time
+	Id           int64
+	Username     string
+	Password     string
+	CreatedAt    time.Time
+	SessionLimit int
 }
 
 func NewUser(id int64, username string, password string) (*User, error) {

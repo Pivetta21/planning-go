@@ -12,7 +12,7 @@ import (
 )
 
 func (f *Refresh) Execute(opaqueToken uuid.UUID) (*RefreshOutput, error) {
-	userSession, err := f.getByOpaqueToken(f.Context, opaqueToken)
+	userSession, err := f.getByOpaqueToken(opaqueToken)
 	if err != nil {
 		return nil, err
 	}
@@ -20,7 +20,7 @@ func (f *Refresh) Execute(opaqueToken uuid.UUID) (*RefreshOutput, error) {
 	userSession.ExpiresAt = time.Now().UTC().Add(core.CookieDurationAuthSession)
 	userSession.OpaqueToken = uuid.New()
 
-	if err := f.refresh(f.Context, userSession); err != nil {
+	if err := f.refresh(userSession); err != nil {
 		return nil, err
 	}
 
@@ -40,7 +40,7 @@ func (f *Refresh) Execute(opaqueToken uuid.UUID) (*RefreshOutput, error) {
 	return out, nil
 }
 
-func (f *Refresh) getByOpaqueToken(ctx context.Context, opaqueToken uuid.UUID) (*entity.UserSession, error) {
+func (f *Refresh) getByOpaqueToken(opaqueToken uuid.UUID) (*entity.UserSession, error) {
 	queryCtx, cancel := context.WithTimeout(f.Context, db.Ctx.DefaultTimeout)
 	defer cancel()
 
@@ -75,8 +75,8 @@ func (f *Refresh) getByOpaqueToken(ctx context.Context, opaqueToken uuid.UUID) (
 	return &us, err
 }
 
-func (f *Refresh) refresh(ctx context.Context, e *entity.UserSession) error {
-	queryCtx, cancel := context.WithTimeout(ctx, db.Ctx.DefaultTimeout)
+func (f *Refresh) refresh(e *entity.UserSession) error {
+	queryCtx, cancel := context.WithTimeout(f.Context, db.Ctx.DefaultTimeout)
 	defer cancel()
 
 	_, err := db.Ctx.Conn.ExecContext(

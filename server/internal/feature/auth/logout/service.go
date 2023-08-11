@@ -12,7 +12,7 @@ import (
 func (f *Logout) Execute() (*LogoutOutput, error) {
 	loggedUser := core.GetLoggedUser(f.Context)
 
-	err := f.deleteByOpaqueToken(f.Context, loggedUser.Session.OpaqueToken)
+	err := f.deleteByOpaqueToken(loggedUser.Session.OpaqueToken)
 	if err != nil {
 		return nil, err
 	}
@@ -33,8 +33,8 @@ func (f *Logout) Execute() (*LogoutOutput, error) {
 	return out, nil
 }
 
-func (f *Logout) deleteByOpaqueToken(ctx context.Context, opaqueToken uuid.UUID) error {
-	queryCtx, cancel := context.WithTimeout(ctx, db.Ctx.DefaultTimeout)
+func (f *Logout) deleteByOpaqueToken(opaqueToken uuid.UUID) error {
+	queryCtx, cancel := context.WithTimeout(f.Context, db.Ctx.DefaultTimeout)
 	defer cancel()
 
 	_, err := db.Ctx.Conn.ExecContext(

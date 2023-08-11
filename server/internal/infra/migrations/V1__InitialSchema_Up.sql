@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS public.users(
 	username VARCHAR(25) NOT NULL,
 	password VARCHAR(255) NOT NULL,
 	created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+	session_limit INTEGER NOT NULL DEFAULT 5,
 	CONSTRAINT pk_users PRIMARY KEY (id),
 	CONSTRAINT uq_users_username UNIQUE (username)
 );
@@ -23,4 +24,3 @@ CREATE TABLE IF NOT EXISTS public.user_sessions(
 	CONSTRAINT fk_user_sessions_users FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE,
 	CONSTRAINT uq_user_sessions_user_id_identifier UNIQUE (user_id, identifier)
 );
-

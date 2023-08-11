@@ -3,9 +3,16 @@ package auth
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/Pivetta21/planning-go/internal/data/enum"
 )
+
+type UserSessionDto struct {
+	Id        int64
+	Active    bool
+	CreatedAt time.Time
+}
 
 type LoginInput struct {
 	Username string             `json:"username"`

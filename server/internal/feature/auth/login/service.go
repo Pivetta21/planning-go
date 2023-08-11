@@ -23,6 +23,10 @@ func (f *Login) Execute(in *LoginInput) (*LoginOutput, error) {
 		return nil, obfuscatedErr
 	}
 
+	if canCreateSession := f.canCreateSession(user.Id, user.SessionLimit); !canCreateSession {
+		return nil, errors.New("something went wrong, try again or logout from other sessions (if any)")
+	}
+
 	userSession, err := f.persistUserSession(user.Id, in.Origin)
 	if err != nil {
 		return nil, obfuscatedErr
@@ -52,7 +56,7 @@ func (f *Login) fetchUser(username, password string) (*entity.User, error) {
 	row := db.Ctx.Conn.QueryRowContext(
 		queryCtx,
 		`
-		SELECT id, username, password, created_at
+		SELECT id, username, password, created_at, session_limit
 		FROM public.users
 		WHERE username = $1
 		`,
@@ -60,7 +64,9 @@ func (f *Login) fetchUser(username, password string) (*entity.User, error) {
 	)
 
 	var user entity.User
-	if err := row.Scan(&user.Id, &user.Username, &user.Password, &user.CreatedAt); err != nil {
+	if err := row.Scan(
+		&user.Id, &user.Username, &user.Password, &user.CreatedAt, &user.SessionLimit,
+	); err != nil {
 		return nil, err
 	}
 
@@ -70,6 +76,78 @@ func (f *Login) fetchUser(username, password string) (*entity.User, error) {
 	}
 
 	return &user, nil
+}
+
+func (f *Login) canCreateSession(userId int64, sessionLimit int) bool {
+	queryCtx, cancel := context.WithTimeout(f.Context, db.Ctx.DefaultTimeout)
+	defer cancel()
+
+	rows, err := db.Ctx.Conn.QueryContext(
+		queryCtx,
+		`
+		SELECT id, created_at, now() < expires_at AS active
+		FROM public.user_sessions
+		WHERE user_id = $1
+		ORDER BY created_at ASC
+		`,
+		userId,
+	)
+	if err != nil {
+		return false
+	}
+	defer rows.Close()
+
+	var userSessions []UserSessionDto
+	for rows.Next() {
+		var us UserSessionDto
+		if err := rows.Scan(&us.Id, &us.CreatedAt, &us.Active); err != nil {
+			return false
+		}
+
+		userSessions = append(userSessions, us)
+	}
+
+	if err := rows.Err(); err != nil {
+		return false
+	}
+
+	if len(userSessions) < sessionLimit {
+		return true
+	}
+
+	if err := f.deleteLastUsedSession(userSessions); err != nil {
+		return false
+	}
+
+	return true
+}
+
+func (f *Login) deleteLastUsedSession(userSessions []UserSessionDto) error {
+	for _, userSession := range userSessions {
+		if !userSession.Active {
+			queryCtx, cancel := context.WithTimeout(f.Context, db.Ctx.DefaultTimeout)
+			defer cancel()
+
+			_, err := db.Ctx.Conn.ExecContext(
+				queryCtx,
+				`DELETE FROM public.user_sessions WHERE id = $1`,
+				userSession.Id,
+			)
+
+			return err
+		}
+	}
+
+	queryCtx, cancel := context.WithTimeout(f.Context, db.Ctx.DefaultTimeout)
+	defer cancel()
+
+	_, err := db.Ctx.Conn.ExecContext(
+		queryCtx,
+		`DELETE FROM public.user_sessions WHERE id = $1`,
+		userSessions[0].Id,
+	)
+
+	return err
 }
 
 func (f *Login) checkPassword(password string, hashedPassword string) bool {
