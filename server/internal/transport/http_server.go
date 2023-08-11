@@ -10,6 +10,7 @@ import (
 	logout "github.com/Pivetta21/planning-go/internal/feature/auth/logout"
 	refresh "github.com/Pivetta21/planning-go/internal/feature/auth/refresh"
 	register "github.com/Pivetta21/planning-go/internal/feature/auth/register"
+	sessiondel "github.com/Pivetta21/planning-go/internal/feature/session/delete"
 	sessionlist "github.com/Pivetta21/planning-go/internal/feature/session/list"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -42,5 +43,6 @@ func sessionRoutes() func(r chi.Router) {
 	return func(r chi.Router) {
 		r.Use(AuthMiddleware)
 		r.Get("/", sessionlist.HandleList)
+		r.Delete("/{identifier}", sessiondel.HandleDelete)
 	}
 }

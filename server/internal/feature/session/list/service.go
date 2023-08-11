@@ -37,7 +37,6 @@ func (f *SessionList) listByUserId(ctx context.Context, userId int64) ([]Session
 	defer rows.Close()
 
 	var userSessions []SessionModel
-
 	for rows.Next() {
 		var us SessionModel
 		if err := rows.Scan(
