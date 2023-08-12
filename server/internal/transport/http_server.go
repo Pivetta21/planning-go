@@ -10,6 +10,7 @@ import (
 	logout "github.com/Pivetta21/planning-go/internal/feature/auth/logout"
 	refresh "github.com/Pivetta21/planning-go/internal/feature/auth/refresh"
 	register "github.com/Pivetta21/planning-go/internal/feature/auth/register"
+	profiledel "github.com/Pivetta21/planning-go/internal/feature/profile/delete"
 	profilefind "github.com/Pivetta21/planning-go/internal/feature/profile/find"
 	profileupdate "github.com/Pivetta21/planning-go/internal/feature/profile/update"
 	sessiondel "github.com/Pivetta21/planning-go/internal/feature/session/delete"
@@ -55,5 +56,6 @@ func profileRoutes() func(r chi.Router) {
 		r.Use(AuthMiddleware)
 		r.Get("/", profilefind.HandleFindProfile)
 		r.Patch("/", profileupdate.HandleUpdateProfile)
+		r.Delete("/", profiledel.HandleDeleteProfile)
 	}
 }
