@@ -2,6 +2,7 @@ package entity
 
 import (
 	"errors"
+	"github.com/Pivetta21/planning-go/internal/core"
 	"strings"
 	"time"
 
@@ -23,7 +24,6 @@ type UserSession struct {
 func NewUserSession(
 	id int64,
 	userId int64,
-	expiration time.Duration,
 	opaqueToken uuid.UUID,
 	origin enum.SessionOrigin,
 ) (*UserSession, error) {
@@ -31,7 +31,7 @@ func NewUserSession(
 		Id:          id,
 		UserId:      userId,
 		Identifier:  util.GenerateIdentifier(),
-		ExpiresAt:   time.Now().UTC().Add(expiration),
+		ExpiresAt:   core.TimeExpirationAuthSession.Future(),
 		OpaqueToken: opaqueToken,
 		Origin:      origin,
 	}

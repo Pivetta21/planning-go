@@ -49,9 +49,11 @@ func fetchLoggedUser(ctx context.Context, opaqueToken uuid.UUID) (*core.LoggedUs
 	row := db.Ctx.Conn.QueryRowContext(
 		queryCtx,
 		`
-		SELECT u.id, us.id, us.identifier, us.opaque_token, us.expires_at
-		FROM public.user_sessions us
-		JOIN public.users u ON u.id = us.user_id
+		SELECT 
+		    u.id, u.username, u.created_at, u.session_limit,
+		    us.id, us.identifier, us.opaque_token, us.expires_at
+		FROM public.user_sessions AS us
+		JOIN public.users AS u ON u.id = us.user_id
 		WHERE us.opaque_token = $1
 		`,
 		opaqueToken,
@@ -60,6 +62,9 @@ func fetchLoggedUser(ctx context.Context, opaqueToken uuid.UUID) (*core.LoggedUs
 	var user core.LoggedUser
 	err := row.Scan(
 		&user.Id,
+		&user.Username,
+		&user.CreatedAt,
+		&user.SessionLimit,
 		&user.Session.Id,
 		&user.Session.Identifier,
 		&user.Session.OpaqueToken,

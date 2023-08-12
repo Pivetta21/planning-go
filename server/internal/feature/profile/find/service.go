@@ -7,9 +7,7 @@ import (
 )
 
 func (f *Find) Execute() (*FindOutput, error) {
-	loggedUser := core.GetLoggedUser(f.Context)
-
-	user, err := f.fetchUserById(loggedUser.Id)
+	user, err := f.populateUser()
 	if err != nil {
 		return nil, err
 	}
@@ -17,31 +15,9 @@ func (f *Find) Execute() (*FindOutput, error) {
 	return user, nil
 }
 
-func (f *Find) fetchUserById(userId int64) (*UserModel, error) {
-	queryCtx, cancel := context.WithTimeout(f.Context, db.Ctx.DefaultTimeout)
-	defer cancel()
+func (f *Find) populateUser() (*UserModel, error) {
+	loggedUser := core.GetLoggedUser(f.Context)
 
-	row := db.Ctx.Conn.QueryRowContext(
-		queryCtx,
-		`
-		SELECT id, username, created_at, session_limit
-		FROM public.users
-		WHERE id = $1
-		`,
-		userId,
-	)
-
-	var user UserModel
-	if err := row.Scan(
-		&user.Id, &user.Username, &user.CreatedAt, &user.SessionLimit,
-	); err != nil {
-		return nil, err
-	}
-
-	return f.fetchUserActiveSessions(&user)
-}
-
-func (f *Find) fetchUserActiveSessions(user *UserModel) (*UserModel, error) {
 	queryCtx, cancel := context.WithTimeout(f.Context, db.Ctx.DefaultTimeout)
 	defer cancel()
 
@@ -52,7 +28,7 @@ func (f *Find) fetchUserActiveSessions(user *UserModel) (*UserModel, error) {
 		FROM public.user_sessions
 		WHERE user_id = $1
 		`,
-		user.Id,
+		loggedUser.Id,
 	)
 
 	var activeSessions int
@@ -60,6 +36,12 @@ func (f *Find) fetchUserActiveSessions(user *UserModel) (*UserModel, error) {
 		return nil, err
 	}
 
-	user.ActiveSessions = activeSessions
+	user := &UserModel{
+		Username:       loggedUser.Username,
+		CreatedAt:      loggedUser.CreatedAt,
+		SessionLimit:   loggedUser.SessionLimit,
+		ActiveSessions: activeSessions,
+	}
+
 	return user, nil
 }

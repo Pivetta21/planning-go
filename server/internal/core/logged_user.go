@@ -8,8 +8,11 @@ import (
 )
 
 type LoggedUser struct {
-	Id      int64
-	Session LoggedUserSession
+	Id           int64
+	Username     string
+	CreatedAt    time.Time
+	SessionLimit int
+	Session      LoggedUserSession
 }
 
 type LoggedUserSession struct {

@@ -2,13 +2,11 @@ package auth
 
 import (
 	"context"
-	"net/http"
-	"time"
-
 	"github.com/Pivetta21/planning-go/internal/core"
 	"github.com/Pivetta21/planning-go/internal/data/entity"
 	"github.com/Pivetta21/planning-go/internal/infra/db"
 	"github.com/google/uuid"
+	"net/http"
 )
 
 func (f *Refresh) Execute(opaqueToken uuid.UUID) (*Output, error) {
@@ -16,9 +14,6 @@ func (f *Refresh) Execute(opaqueToken uuid.UUID) (*Output, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	userSession.ExpiresAt = time.Now().UTC().Add(core.CookieDurationAuthSession)
-	userSession.OpaqueToken = uuid.New()
 
 	if err := f.refresh(userSession); err != nil {
 		return nil, err
@@ -30,7 +25,7 @@ func (f *Refresh) Execute(opaqueToken uuid.UUID) (*Output, error) {
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   true,
-		MaxAge:   int(core.CookieDurationAuthSession.Seconds()),
+		MaxAge:   core.TimeExpirationAuthCookie.MaxAge(),
 	}
 
 	out := &Output{
@@ -69,7 +64,7 @@ func (f *Refresh) getByOpaqueToken(opaqueToken uuid.UUID) (*entity.UserSession, 
 		return nil, err
 	}
 
-	us.ExpiresAt = time.Now().UTC().Add(core.CookieDurationAuthSession)
+	us.ExpiresAt = core.TimeExpirationAuthSession.Future()
 	us.OpaqueToken = uuid.New()
 
 	return &us, err

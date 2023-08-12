@@ -4,15 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net/http"
-	"strings"
-
 	"github.com/Pivetta21/planning-go/internal/core"
 	"github.com/Pivetta21/planning-go/internal/data/entity"
 	"github.com/Pivetta21/planning-go/internal/data/enum"
 	"github.com/Pivetta21/planning-go/internal/infra/db"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
+	"net/http"
+	"strings"
 )
 
 func (f *Login) Execute(in *Input) (*Output, error) {
@@ -38,7 +37,7 @@ func (f *Login) Execute(in *Input) (*Output, error) {
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   true,
-		MaxAge:   int(core.CookieDurationAuthSession.Seconds()),
+		MaxAge:   core.TimeExpirationAuthCookie.MaxAge(),
 	}
 
 	out := &Output{
@@ -162,7 +161,7 @@ func (f *Login) checkPassword(password string, hashedPassword string) bool {
 }
 
 func (f *Login) persistUserSession(userId int64, origin enum.SessionOrigin) (*entity.UserSession, error) {
-	userSession, err := entity.NewUserSession(0, userId, core.CookieDurationAuthSession, uuid.New(), origin)
+	userSession, err := entity.NewUserSession(0, userId, uuid.New(), origin)
 	if err != nil {
 		return nil, err
 	}

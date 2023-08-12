@@ -2,7 +2,6 @@ package transport
 
 import (
 	"fmt"
-	profilefind "github.com/Pivetta21/planning-go/internal/feature/profile/find"
 	"log"
 	"net/http"
 
@@ -11,6 +10,8 @@ import (
 	logout "github.com/Pivetta21/planning-go/internal/feature/auth/logout"
 	refresh "github.com/Pivetta21/planning-go/internal/feature/auth/refresh"
 	register "github.com/Pivetta21/planning-go/internal/feature/auth/register"
+	profilefind "github.com/Pivetta21/planning-go/internal/feature/profile/find"
+	profileupdate "github.com/Pivetta21/planning-go/internal/feature/profile/update"
 	sessiondel "github.com/Pivetta21/planning-go/internal/feature/session/delete"
 	sessionlist "github.com/Pivetta21/planning-go/internal/feature/session/list"
 	"github.com/go-chi/chi/v5"
@@ -53,5 +54,6 @@ func profileRoutes() func(r chi.Router) {
 	return func(r chi.Router) {
 		r.Use(AuthMiddleware)
 		r.Get("/", profilefind.HandleFindProfile)
+		r.Patch("/", profileupdate.HandleUpdateProfile)
 	}
 }

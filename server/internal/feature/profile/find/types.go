@@ -6,11 +6,10 @@ import (
 )
 
 type UserModel struct {
-	Id             int64     `json:"-"`
 	Username       string    `json:"username"`
 	CreatedAt      time.Time `json:"createdAt"`
-	ActiveSessions int       `json:"activeSessions"`
 	SessionLimit   int       `json:"sessionLimit"`
+	ActiveSessions int       `json:"activeSessions"`
 }
 
 type FindOutput = UserModel
