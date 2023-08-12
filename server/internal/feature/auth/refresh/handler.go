@@ -20,11 +20,11 @@ func HandleRefresh(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	refresh := Refresh{
+	feat := Refresh{
 		Context: r.Context(),
 	}
 
-	out, err := refresh.Execute(opaqueToken)
+	out, err := feat.Execute(opaqueToken)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return

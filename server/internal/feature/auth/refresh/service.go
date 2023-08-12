@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (f *Refresh) Execute(opaqueToken uuid.UUID) (*RefreshOutput, error) {
+func (f *Refresh) Execute(opaqueToken uuid.UUID) (*Output, error) {
 	userSession, err := f.getByOpaqueToken(opaqueToken)
 	if err != nil {
 		return nil, err
@@ -33,7 +33,7 @@ func (f *Refresh) Execute(opaqueToken uuid.UUID) (*RefreshOutput, error) {
 		MaxAge:   int(core.CookieDurationAuthSession.Seconds()),
 	}
 
-	out := &RefreshOutput{
+	out := &Output{
 		Cookie: cookie,
 	}
 

@@ -2,6 +2,6 @@ package session
 
 import "context"
 
-type SessionDelete struct {
+type Delete struct {
 	context.Context
 }

@@ -9,7 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (f *Register) Execute(in *RegisterInput) (*RegisterOutput, error) {
+func (f *Register) Execute(in *Input) (*Output, error) {
 	hashedPassword, err := f.hashPassword(in.Password)
 	if err != nil {
 		return nil, err
@@ -38,7 +38,7 @@ func (f *Register) Execute(in *RegisterInput) (*RegisterOutput, error) {
 		return nil, err
 	}
 
-	out := &RegisterOutput{
+	out := &Output{
 		Message: fmt.Sprintf("User %#q created successfully", in.Username),
 	}
 

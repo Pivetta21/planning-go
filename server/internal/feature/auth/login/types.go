@@ -14,13 +14,13 @@ type UserSessionDto struct {
 	CreatedAt time.Time
 }
 
-type LoginInput struct {
+type Input struct {
 	Username string             `json:"username"`
 	Password string             `json:"password"`
 	Origin   enum.SessionOrigin `json:"origin"`
 }
 
-type LoginOutput struct {
+type Output struct {
 	Message string       `json:"message"`
 	Cookie  *http.Cookie `json:"-"`
 }

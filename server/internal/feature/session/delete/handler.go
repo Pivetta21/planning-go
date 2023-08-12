@@ -12,11 +12,11 @@ func HandleDelete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
-	sessionDelete := SessionDelete{
+	feat := Delete{
 		r.Context(),
 	}
 
-	if err := sessionDelete.Execute(identifier); err != nil {
+	if err := feat.Execute(identifier); err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}

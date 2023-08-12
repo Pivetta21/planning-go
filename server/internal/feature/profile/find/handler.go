@@ -10,14 +10,14 @@ func HandleFindProfile(w http.ResponseWriter, r *http.Request) {
 		r.Context(),
 	}
 
-	user, err := feat.Execute()
+	out, err := feat.Execute()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
 	w.Header().Add("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(user); err != nil {
+	if err := json.NewEncoder(w).Encode(out); err != nil {
 		http.Error(w, "something went wrong", http.StatusInternalServerError)
 	}
 }

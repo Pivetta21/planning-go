@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (f *Logout) Execute() (*LogoutOutput, error) {
+func (f *Logout) Execute() (*Output, error) {
 	loggedUser := core.GetLoggedUser(f.Context)
 
 	err := f.deleteByOpaqueToken(loggedUser.Session.OpaqueToken)
@@ -26,7 +26,7 @@ func (f *Logout) Execute() (*LogoutOutput, error) {
 		MaxAge:   0,
 	}
 
-	out := &LogoutOutput{
+	out := &Output{
 		Cookie: cookie,
 	}
 

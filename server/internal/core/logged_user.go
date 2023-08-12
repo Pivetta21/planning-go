@@ -9,10 +9,10 @@ import (
 
 type LoggedUser struct {
 	Id      int64
-	Session loggedUserSession
+	Session LoggedUserSession
 }
 
-type loggedUserSession struct {
+type LoggedUserSession struct {
 	Id          int64
 	Identifier  string
 	OpaqueToken uuid.UUID

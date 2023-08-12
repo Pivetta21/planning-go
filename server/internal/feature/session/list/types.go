@@ -7,7 +7,7 @@ import (
 	"github.com/Pivetta21/planning-go/internal/data/enum"
 )
 
-type SessionModel struct {
+type UserSessionModel struct {
 	Id                int64              `json:"-"`
 	Identifier        string             `json:"identifier"`
 	Origin            enum.SessionOrigin `json:"-"`
@@ -16,8 +16,8 @@ type SessionModel struct {
 	Active            bool               `json:"active"`
 }
 
-type SessionListOutput []SessionModel
+type Output []UserSessionModel
 
-type SessionList struct {
+type List struct {
 	context.Context
 }

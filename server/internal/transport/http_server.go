@@ -2,6 +2,7 @@ package transport
 
 import (
 	"fmt"
+	profilefind "github.com/Pivetta21/planning-go/internal/feature/profile/find"
 	"log"
 	"net/http"
 
@@ -25,6 +26,7 @@ func StartHttpServer() error {
 	// Routes
 	mux.Route("/auth", authRoutes())
 	mux.Route("/session", sessionRoutes())
+	mux.Route("/profile", profileRoutes())
 
 	log.Println("server running on port:", configs.APIConfig.Port)
 	return http.ListenAndServe(fmt.Sprintf("localhost:%d", configs.APIConfig.Port), mux)
@@ -44,5 +46,12 @@ func sessionRoutes() func(r chi.Router) {
 		r.Use(AuthMiddleware)
 		r.Get("/", sessionlist.HandleList)
 		r.Delete("/{identifier}", sessiondel.HandleDelete)
+	}
+}
+
+func profileRoutes() func(r chi.Router) {
+	return func(r chi.Router) {
+		r.Use(AuthMiddleware)
+		r.Get("/", profilefind.HandleFindProfile)
 	}
 }

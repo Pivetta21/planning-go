@@ -6,17 +6,17 @@ import (
 )
 
 func HandleLogin(w http.ResponseWriter, r *http.Request) {
-	var in LoginInput
+	var in Input
 	if json.NewDecoder(r.Body).Decode(&in) != nil {
 		http.Error(w, "please verify the provided payload", http.StatusBadRequest)
 		return
 	}
 
-	login := Login{
+	feat := Login{
 		Context: r.Context(),
 	}
 
-	out, err := login.Execute(&in)
+	out, err := feat.Execute(&in)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return

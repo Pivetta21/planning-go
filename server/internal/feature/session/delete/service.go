@@ -9,7 +9,7 @@ import (
 	"github.com/Pivetta21/planning-go/internal/infra/db"
 )
 
-func (f *SessionDelete) Execute(identifier string) error {
+func (f *Delete) Execute(identifier string) error {
 	loggedUser := core.GetLoggedUser(f.Context)
 
 	if loggedUser.Session.Identifier == identifier {

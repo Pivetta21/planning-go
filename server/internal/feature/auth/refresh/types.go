@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-type RefreshOutput struct {
+type Output struct {
 	Cookie *http.Cookie `json:"-"`
 }
 

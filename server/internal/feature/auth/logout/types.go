@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-type LogoutOutput struct {
+type Output struct {
 	Cookie *http.Cookie `json:"-"`
 }
 

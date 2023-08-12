@@ -6,17 +6,17 @@ import (
 )
 
 func HandleRegister(w http.ResponseWriter, r *http.Request) {
-	var in RegisterInput
+	var in Input
 	if json.NewDecoder(r.Body).Decode(&in) != nil {
 		http.Error(w, "please verify the provided payload", http.StatusBadRequest)
 		return
 	}
 
-	register := Register{
+	feat := Register{
 		Context: r.Context(),
 	}
 
-	out, err := register.Execute(&in)
+	out, err := feat.Execute(&in)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return

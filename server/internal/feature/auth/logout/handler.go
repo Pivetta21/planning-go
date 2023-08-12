@@ -5,11 +5,11 @@ import (
 )
 
 func HandleLogout(w http.ResponseWriter, r *http.Request) {
-	logout := Logout{
+	feat := Logout{
 		Context: r.Context(),
 	}
 
-	out, err := logout.Execute()
+	out, err := feat.Execute()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return

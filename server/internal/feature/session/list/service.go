@@ -2,12 +2,11 @@ package session
 
 import (
 	"context"
-
 	"github.com/Pivetta21/planning-go/internal/core"
 	"github.com/Pivetta21/planning-go/internal/infra/db"
 )
 
-func (f *SessionList) Execute() (SessionListOutput, error) {
+func (f *List) Execute() (Output, error) {
 	loggedUser := core.GetLoggedUser(f.Context)
 
 	userSessions, err := f.listByUserId(f.Context, loggedUser.Id)
@@ -18,7 +17,7 @@ func (f *SessionList) Execute() (SessionListOutput, error) {
 	return userSessions, nil
 }
 
-func (f *SessionList) listByUserId(ctx context.Context, userId int64) ([]SessionModel, error) {
+func (f *List) listByUserId(ctx context.Context, userId int64) ([]UserSessionModel, error) {
 	queryCtx, cancel := context.WithTimeout(ctx, db.Ctx.DefaultTimeout)
 	defer cancel()
 
@@ -31,14 +30,15 @@ func (f *SessionList) listByUserId(ctx context.Context, userId int64) ([]Session
 		`,
 		userId,
 	)
+
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var userSessions []SessionModel
+	var userSessions []UserSessionModel
 	for rows.Next() {
-		var us SessionModel
+		var us UserSessionModel
 		if err := rows.Scan(
 			&us.Id,
 			&us.Identifier,

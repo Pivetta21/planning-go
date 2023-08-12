@@ -15,7 +15,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (f *Login) Execute(in *LoginInput) (*LoginOutput, error) {
+func (f *Login) Execute(in *Input) (*Output, error) {
 	obfuscatedErr := errors.New("please check your credentials")
 
 	user, err := f.fetchUser(in.Username, in.Password)
@@ -41,7 +41,7 @@ func (f *Login) Execute(in *LoginInput) (*LoginOutput, error) {
 		MaxAge:   int(core.CookieDurationAuthSession.Seconds()),
 	}
 
-	out := &LoginOutput{
+	out := &Output{
 		Message: fmt.Sprintf("Welcome back %#q!", user.Username),
 		Cookie:  cookie,
 	}
@@ -88,10 +88,11 @@ func (f *Login) canCreateSession(userId int64, sessionLimit int) bool {
 		SELECT id, created_at, now() < expires_at AS active
 		FROM public.user_sessions
 		WHERE user_id = $1
-		ORDER BY created_at ASC
+		ORDER BY created_at
 		`,
 		userId,
 	)
+
 	if err != nil {
 		return false
 	}
@@ -115,18 +116,19 @@ func (f *Login) canCreateSession(userId int64, sessionLimit int) bool {
 		return true
 	}
 
-	if err := f.deleteLastUsedSession(userSessions); err != nil {
+	if err := f.deleteLastActiveSession(userSessions); err != nil {
 		return false
 	}
 
 	return true
 }
 
-func (f *Login) deleteLastUsedSession(userSessions []UserSessionDto) error {
+func (f *Login) deleteLastActiveSession(userSessions []UserSessionDto) error {
+	queryCtx, cancel := context.WithTimeout(f.Context, db.Ctx.DefaultTimeout)
+	defer cancel()
+
 	for _, userSession := range userSessions {
 		if !userSession.Active {
-			queryCtx, cancel := context.WithTimeout(f.Context, db.Ctx.DefaultTimeout)
-			defer cancel()
 
 			_, err := db.Ctx.Conn.ExecContext(
 				queryCtx,
@@ -138,13 +140,17 @@ func (f *Login) deleteLastUsedSession(userSessions []UserSessionDto) error {
 		}
 	}
 
+	return f.deleteLastUsedSession(&userSessions[0])
+}
+
+func (f *Login) deleteLastUsedSession(userSession *UserSessionDto) error {
 	queryCtx, cancel := context.WithTimeout(f.Context, db.Ctx.DefaultTimeout)
 	defer cancel()
 
 	_, err := db.Ctx.Conn.ExecContext(
 		queryCtx,
 		`DELETE FROM public.user_sessions WHERE id = $1`,
-		userSessions[0].Id,
+		userSession.Id,
 	)
 
 	return err

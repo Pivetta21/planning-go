@@ -4,12 +4,12 @@ import (
 	"context"
 )
 
-type RegisterInput struct {
+type Input struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-type RegisterOutput struct {
+type Output struct {
 	Message string `json:"message"`
 }
 

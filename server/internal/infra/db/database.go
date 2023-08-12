@@ -11,15 +11,15 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type DbContext struct {
+type Context struct {
 	// Database connection pool
 	Conn *sql.DB
 
-	// Default duration timeout (i. e., in seconds) for contexts
+	// Default duration timeout (i.e., in seconds) for contexts
 	DefaultTimeout time.Duration
 }
 
-var Ctx *DbContext
+var Ctx *Context
 
 func OpenConnection() {
 	cfg := configs.DBConfig.Postgres
@@ -40,7 +40,7 @@ func OpenConnection() {
 		log.Fatal(err)
 	}
 
-	Ctx = &DbContext{
+	Ctx = &Context{
 		Conn:           conn,
 		DefaultTimeout: 3 * time.Second,
 	}
@@ -49,6 +49,10 @@ func OpenConnection() {
 }
 
 func CloseConnection() {
-	Ctx.Conn.Close()
+	err := Ctx.Conn.Close()
+	if err != nil {
+		log.Fatal("database connection could not be closed")
+	}
+
 	log.Println("database connection closed")
 }
