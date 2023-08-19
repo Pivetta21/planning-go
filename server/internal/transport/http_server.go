@@ -13,25 +13,37 @@ import (
 	profiledel "github.com/Pivetta21/planning-go/internal/feature/profile/delete"
 	profilefind "github.com/Pivetta21/planning-go/internal/feature/profile/find"
 	profileupdate "github.com/Pivetta21/planning-go/internal/feature/profile/update"
+	roomwsconn "github.com/Pivetta21/planning-go/internal/feature/room/conn"
 	sessiondel "github.com/Pivetta21/planning-go/internal/feature/session/delete"
 	sessionlist "github.com/Pivetta21/planning-go/internal/feature/session/list"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 )
 
-func StartHttpServer() error {
+func StartHttpServer() {
 	mux := chi.NewRouter()
 
 	mux.Use(middleware.Recoverer)
 	mux.Use(middleware.AllowContentType("application/json"))
 
+	// CORS
+	mux.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"},
+		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+	}))
+
 	// Routes
 	mux.Route("/auth", authRoutes())
 	mux.Route("/session", sessionRoutes())
 	mux.Route("/profile", profileRoutes())
+	mux.Route("/room", roomRoutes())
 
-	log.Println("server running on port:", configs.APIConfig.Port)
-	return http.ListenAndServe(fmt.Sprintf("localhost:%d", configs.APIConfig.Port), mux)
+	log.Println("http server running on port:", configs.APIConfig.Port)
+
+	err := http.ListenAndServe(fmt.Sprintf("localhost:%d", configs.APIConfig.Port), mux)
+	log.Fatalln(err)
 }
 
 func authRoutes() func(r chi.Router) {
@@ -57,5 +69,11 @@ func profileRoutes() func(r chi.Router) {
 		r.Get("/", profilefind.HandleFindProfile)
 		r.Patch("/", profileupdate.HandleUpdateProfile)
 		r.Delete("/", profiledel.HandleDeleteProfile)
+	}
+}
+
+func roomRoutes() func(r chi.Router) {
+	return func(r chi.Router) {
+		r.Get("/conn", roomwsconn.HandleRoomConnection)
 	}
 }
