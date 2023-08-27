@@ -1,10 +1,22 @@
-export class LoginRequest {
-    constructor(
-        public username: string,
-        public password: string
-    ) { }
+import { FormControl } from "@angular/forms";
+
+export type LoginForm = {
+    username: FormControl<string>
+    password: FormControl<string>
 }
 
-export class LoginResponse {
+export class LoginRequest {
+    username: string
+    password: string
+    origin: number
 
+    constructor(formValues: Partial<LoginRequest>) {
+        this.username = formValues.username ?? ""
+        this.password = formValues.password ?? ""
+        this.origin = 1 
+    }
+}
+
+export type LoginResponse = {
+    message: string
 }

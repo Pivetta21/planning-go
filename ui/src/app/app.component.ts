@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
+  template: '<router-outlet></router-outlet>',
+  styles: [':host { height: 100vh; width: 100vw; } ']
 })
 export class AppComponent {
 }
