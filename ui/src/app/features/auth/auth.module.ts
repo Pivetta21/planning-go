@@ -9,8 +9,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
+import { AuthService } from '../../core/services/auth.service';
+
 import { AuthRoutingModule } from './auth-routing.module';
-import { AuthService } from './services/auth.service';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 
