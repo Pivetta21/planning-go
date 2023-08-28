@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
           this.isLoading = false
           this.snackBar.open('Please check your credentials', 'Close', { duration: 3000 })
         },
-        complete: () => this.router.navigate(['auth', 'register']),
+        complete: () => this.router.navigate(['session']),
       })
     }
   }
