@@ -4,14 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+	"strings"
+
+	"github.com/Pivetta21/planning-go/internal/configs"
 	"github.com/Pivetta21/planning-go/internal/core"
 	"github.com/Pivetta21/planning-go/internal/data/entity"
 	"github.com/Pivetta21/planning-go/internal/data/enum"
 	"github.com/Pivetta21/planning-go/internal/infra/db"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
-	"strings"
 )
 
 func (f *Login) Execute(in *Input) (*Output, error) {
@@ -35,8 +37,8 @@ func (f *Login) Execute(in *Input) (*Output, error) {
 		Name:     core.CookieNameAuthSession.String(),
 		Value:    userSession.OpaqueToken.String(),
 		Path:     "/",
-		HttpOnly: true,
-		Secure:   true,
+		HttpOnly: configs.APIConfig.IsProduction(),
+		Secure:   configs.APIConfig.IsProduction(),
 		MaxAge:   core.TimeExpirationAuthCookie.MaxAge(),
 	}
 

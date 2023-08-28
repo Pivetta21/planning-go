@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/Pivetta21/planning-go/internal/configs"
 	"github.com/Pivetta21/planning-go/internal/core"
 	"github.com/Pivetta21/planning-go/internal/infra/db"
 	"github.com/google/uuid"
@@ -21,8 +22,8 @@ func (f *Logout) Execute() (*Output, error) {
 		Name:     core.CookieNameAuthSession.String(),
 		Value:    "",
 		Path:     "/",
-		HttpOnly: true,
-		Secure:   true,
+		HttpOnly: configs.APIConfig.IsProduction(),
+		Secure:   configs.APIConfig.IsProduction(),
 		MaxAge:   0,
 	}
 

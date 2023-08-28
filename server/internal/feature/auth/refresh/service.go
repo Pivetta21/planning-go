@@ -2,11 +2,13 @@ package auth
 
 import (
 	"context"
+	"net/http"
+
+	"github.com/Pivetta21/planning-go/internal/configs"
 	"github.com/Pivetta21/planning-go/internal/core"
 	"github.com/Pivetta21/planning-go/internal/data/entity"
 	"github.com/Pivetta21/planning-go/internal/infra/db"
 	"github.com/google/uuid"
-	"net/http"
 )
 
 func (f *Refresh) Execute(opaqueToken uuid.UUID) (*Output, error) {
@@ -23,8 +25,8 @@ func (f *Refresh) Execute(opaqueToken uuid.UUID) (*Output, error) {
 		Name:     core.CookieNameAuthSession.String(),
 		Value:    userSession.OpaqueToken.String(),
 		Path:     "/",
-		HttpOnly: true,
-		Secure:   true,
+		HttpOnly: configs.APIConfig.IsProduction(),
+		Secure:   configs.APIConfig.IsProduction(),
 		MaxAge:   core.TimeExpirationAuthCookie.MaxAge(),
 	}
 
