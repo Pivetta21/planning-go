@@ -4,9 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
-
-import { LoginRequest, LoginResponse } from '../../features/auth/models/login.model';
-import { RegisterRequest, RegisterResponse } from '../../features/auth/models/register.model';
+import { IAuthRequest, IAuthResponse } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,26 +12,30 @@ import { RegisterRequest, RegisterResponse } from '../../features/auth/models/re
 export class AuthService {
   private authUrl = `${environment.apiUrl}/auth`;
 
-  private httpOptions = {
+  private options = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
     }),
     withCredentials: true,
-  }
+  };
 
   constructor(
     private http: HttpClient,
   ) { }
 
-  login(request: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.authUrl}/sign-in`, request, this.httpOptions)
+  login(request: IAuthRequest): Observable<IAuthResponse> {
+    return this.http.post<IAuthResponse>(`${this.authUrl}/sign-in`, request, this.options)
   }
 
-  register(request: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${this.authUrl}/sign-up`, request, this.httpOptions)
+  register(request: IAuthRequest): Observable<IAuthResponse> {
+    return this.http.post<IAuthResponse>(`${this.authUrl}/sign-up`, request, this.options)
   }
 
-  logout(): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.authUrl}/logout`, this.httpOptions)
+  logout(): Observable<IAuthResponse> {
+    return this.http.delete<IAuthResponse>(`${this.authUrl}/logout`, this.options)
+  }
+
+  refresh(): Observable<IAuthResponse> {
+    return this.http.post<IAuthResponse>(`${this.authUrl}/refresh`, this.options)
   }
 }

@@ -16,7 +16,3 @@ export class LoginRequest {
         this.origin = 1 
     }
 }
-
-export type LoginResponse = {
-    message: string
-}

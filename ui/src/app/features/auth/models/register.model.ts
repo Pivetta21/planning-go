@@ -14,7 +14,3 @@ export class RegisterRequest {
         this.password = formValues.password ?? ""
     }
 }
-
-export type RegisterResponse = {
-    message: string
-}
