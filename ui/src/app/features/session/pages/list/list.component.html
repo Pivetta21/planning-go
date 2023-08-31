@@ -1,0 +1,28 @@
+<app-container>
+    <h1 class="mat-headline-5">Sessions</h1>
+    <div class="sessions">
+        <mat-card *ngFor="let session of sessions$ | async" class="session">
+            <mat-card-content class="session-content">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <p>Session #<strong>{{session.identifier}}</strong></p>
+                        <p>{{session.createdAt | date:'MM-dd-yyyy hh:mm:ss'}}</p>
+                    </div>
+                    <div>
+                        <span class="session-tag" style="background-color: #433e85;">{{session.origin}}</span>
+                        <span class="session-tag" [ngStyle]="{'background-color': session.active ? '#2da054' : '#d84518'}">
+                            {{session.active ? 'ACTIVE' : 'INACTIVE'}}
+                        </span>
+                    </div>
+                </div>
+            </mat-card-content>
+            <mat-card-actions align="end">
+                <div [matTooltip]="showDeleteTooltip(session.current)">
+                    <button mat-icon-button color="warn" [disabled]="session.current" (click)="deleteSession(session.identifier)">
+                        <mat-icon aria-hidden="false" aria-label="Active" fontIcon="remove" />
+                    </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</app-container>

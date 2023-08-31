@@ -8,6 +8,10 @@ const routes: Routes = [
     loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule),
   },
   {
+    path: 'session',
+    loadChildren: () => import('./features/session/session.module').then(m => m.SessionModule),
+  },
+  {
     path: '',
     redirectTo: 'auth/login',
     pathMatch: 'full'

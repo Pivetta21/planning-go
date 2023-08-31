@@ -14,6 +14,7 @@ type UserSessionModel struct {
 	OriginDescription string             `json:"origin"`
 	CreatedAt         time.Time          `json:"createdAt"`
 	Active            bool               `json:"active"`
+	Current           bool               `json:"current"`
 }
 
 type Output []UserSessionModel
