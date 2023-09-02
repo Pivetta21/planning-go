@@ -30,7 +30,7 @@ func StartHttpServer() {
 	// CORS
 	mux.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:4200"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		AllowCredentials: true,
 	}))

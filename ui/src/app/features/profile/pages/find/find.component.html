@@ -3,14 +3,45 @@
         <h1 class="mat-headline-4">
             Welcome back
         </h1>
-        <h2 class="mat-headline-5">
-            {{profile.username | titlecase}}
-        </h2>
+        <div class="profile-username" *ngIf="!isEditView">
+            <h2 class="mat-headline-5">
+                {{profile.username | titlecase}}
+            </h2>
+            <mat-icon (click)="toggleEditView(profile.username)">edit</mat-icon>
+        </div>
+        <div *ngIf="isEditView && profileUpdateForm">
+            <form [formGroup]="profileUpdateForm" (ngSubmit)="onSubmit()" class="form">
+                <mat-form-field>
+                    <mat-label>Username</mat-label>
+                    <input matInput type="text" formControlName="username" />
+                    <button *ngIf="username" matSuffix mat-icon-button type="submit" aria-label="Clear"
+                        [disabled]="profileUpdateForm.invalid || profileUpdateForm.pristine || isUpdateLoading">
+                        <mat-icon>check</mat-icon>
+                    </button>
+                    <button *ngIf="username" matSuffix mat-icon-button type="submit" aria-label="Clear"
+                        (click)="$event.preventDefault(); toggleEditView(profile.username)">
+                        <mat-icon>undo</mat-icon>
+                    </button>
+                    <ng-container *ngIf="username.invalid && (username.dirty || username.touched)">
+                        <mat-error *ngIf="username.errors?.['required']">
+                            Username is required.
+                        </mat-error>
+                        <mat-error *ngIf="username.errors?.['minlength']">
+                            Username must be at least 3 characters long.
+                        </mat-error>
+                        <mat-error *ngIf="username.errors?.['maxlength']">
+                            Username must be less than 25 characters long.
+                        </mat-error>
+                    </ng-container>
+                </mat-form-field>
+            </form>
+        </div>
         <h3 class="mat-subtitle-1">
-             <strong>Member since:</strong> {{profile.createdAt | date:'MM-dd-yyyy hh:mm:ss'}}
+            <strong>Member since:</strong> {{profile.createdAt | date:'MM-dd-yyyy hh:mm:ss'}}
         </h3>
         <p class="mat-display-4">
-            You have a total of <strong>{{profile.activeSessions}}</strong> active sessions (limited to {{profile.sessionLimit}})
+            You have a total of <strong>{{profile.activeSessions}}</strong> active sessions (limited to
+            {{profile.sessionLimit}})
         </p>
     </div>
     <ng-template #loadingRef>

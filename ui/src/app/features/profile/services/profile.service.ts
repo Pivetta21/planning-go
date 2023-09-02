@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
-import { IProfileModel } from '../models/profile.model';
+import { IProfileModel, ProfileUpdateRequest } from '../models/profile.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,5 +17,9 @@ export class ProfileService {
 
   find(): Observable<IProfileModel> {
     return this.http.get<IProfileModel>(this.profileUrl)
+  }
+
+  patch(request: ProfileUpdateRequest): Observable<any> {
+    return this.http.patch<any>(`${this.profileUrl}`, request)
   }
 }
