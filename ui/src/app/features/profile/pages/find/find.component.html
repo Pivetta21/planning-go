@@ -1,0 +1,19 @@
+<app-container>
+    <div *ngIf="(profile$ | async) as profile; else loadingRef">
+        <h1 class="mat-headline-4">
+            Welcome back
+        </h1>
+        <h2 class="mat-headline-5">
+            {{profile.username | titlecase}}
+        </h2>
+        <h3 class="mat-subtitle-1">
+             <strong>Member since:</strong> {{profile.createdAt | date:'MM-dd-yyyy hh:mm:ss'}}
+        </h3>
+        <p class="mat-display-4">
+            You have a total of <strong>{{profile.activeSessions}}</strong> active sessions (limited to {{profile.sessionLimit}})
+        </p>
+    </div>
+    <ng-template #loadingRef>
+        Loading profile...
+    </ng-template>
+</app-container>

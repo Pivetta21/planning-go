@@ -7,6 +7,7 @@ import { AuthService } from '../core/services/auth.service';
 import { ContainerComponent } from './components/container/container.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
   ],
   imports: [
     CommonModule,
+    RouterModule,
     MatSidenavModule,
     MatSnackBarModule,
     MatButtonModule,
@@ -21,8 +23,5 @@ import { MatButtonModule } from '@angular/material/button';
   exports: [
     ContainerComponent,
   ],
-  providers: [
-    AuthService,
-  ]
 })
 export class SharedModule { }

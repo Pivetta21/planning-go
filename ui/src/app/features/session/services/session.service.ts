@@ -11,22 +11,15 @@ import { Observable } from 'rxjs';
 export class SessionService {
   private sessionUrl = `${environment.apiUrl}/session`;
 
-  private options = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json'
-    }),
-    withCredentials: true,
-  };
-
   constructor(
     private http: HttpClient,
   ) { }
 
   list(): Observable<ISessionModel[]> {
-    return this.http.get<ISessionModel[]>(this.sessionUrl, this.options);
+    return this.http.get<ISessionModel[]>(this.sessionUrl);
   }
 
   delete(identifier: string): Observable<any> {
-    return this.http.delete(`${this.sessionUrl}/${identifier}`, this.options) 
+    return this.http.delete(`${this.sessionUrl}/${identifier}`);
   }
 }

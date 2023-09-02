@@ -33,12 +33,14 @@ export class LoginComponent implements OnInit {
 
       const request = new LoginRequest(this.loginForm.value)
       this.authService.login(request).subscribe({
-        next: () => this.isLoading = false,
+        next: () => { 
+          this.isLoading = false
+        },
         error: () => {
           this.isLoading = false
           this.snackBar.open('Please check your credentials', 'Close', { duration: 3000 })
         },
-        complete: () => this.router.navigate(['session']),
+        complete: () => this.router.navigate(['profile']),
       })
     }
   }

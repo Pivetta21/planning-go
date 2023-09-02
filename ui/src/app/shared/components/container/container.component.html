@@ -3,8 +3,11 @@
         <div class="nav-menu">
             <h1 class="mat-headline-5" style="text-align: center;">Planning Go</h1>
 
-            <button mat-stroked-button color="link" type="button" routerLink="session" routerLinkActive="active"
-                ariaCurrentWhenActive="page">Session</button>
+            <a mat-stroked-button color="link" type="button" routerLink="/profile" routerLinkActive="active"
+                ariaCurrentWhenActive="page">Profile</a>
+
+            <a mat-stroked-button color="link" type="button" routerLink="/session" routerLinkActive="active"
+                ariaCurrentWhenActive="page">Session</a>
 
             <button mat-flat-button color="accent" type="button" (click)="logout()" [disabled]="isLogoutLoading">Logout</button>
         </div>

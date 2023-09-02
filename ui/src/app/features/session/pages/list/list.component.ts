@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { ISessionModel } from '../../models/session.model';
 import { SessionService } from '../../services/session.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -11,6 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class ListComponent implements OnInit {
   sessions$!: Observable<ISessionModel[]>
+  isLoading: boolean = true
 
   constructor(
     private sessionService: SessionService,
@@ -22,7 +23,10 @@ export class ListComponent implements OnInit {
   }
 
   fetchSessions() {
-    this.sessions$ = this.sessionService.list()
+    this.isLoading = true
+    this.sessions$ = this.sessionService.list().pipe(
+      tap(() => this.isLoading = false)
+    )
   }
 
   deleteSession(identifier: string) {

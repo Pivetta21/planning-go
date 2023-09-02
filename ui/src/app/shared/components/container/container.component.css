@@ -26,6 +26,11 @@
     margin-top: auto;
 }
 
+.active {
+    background-color: #3f51b5;
+    color: #F1F1F1 !important;
+}
+
 .content {
     padding: var(--container-padding);
 }

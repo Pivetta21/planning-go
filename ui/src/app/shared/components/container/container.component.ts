@@ -24,6 +24,7 @@ export class ContainerComponent {
       next: () => this.isLogoutLoading = false,
       error: () => {
         this.isLogoutLoading = false
+        this.router.navigate(['auth', 'login'])
         this.snackBar.open('Something went wrong. Please try again later...', 'Close', { duration: 3000 })
       },
       complete: () => this.router.navigate([''], { replaceUrl: true }),
