@@ -9,6 +9,12 @@ import { AuthService } from 'src/app/core/services/auth.service';
   styleUrls: ['./container.component.css']
 })
 export class ContainerComponent {
+  routes = [
+    { name: 'Profile', link: '/profile' },
+    { name: 'Session', link: '/session' },
+    { name: 'Room', link: '/room' },
+  ]
+
   isLogoutLoading: boolean = false
 
   constructor(

@@ -16,6 +16,10 @@ const routes: Routes = [
     loadChildren: () => import('./features/profile/profile.module').then(m => m.ProfileModule),
   },
   {
+    path: 'room',
+    loadChildren: () => import('./features/room/room.module').then(m => m.RoomModule),
+  },
+  {
     path: '',
     redirectTo: 'auth/login',
     pathMatch: 'full'

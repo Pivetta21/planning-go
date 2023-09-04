@@ -1,0 +1,15 @@
+<app-container>
+    <div class="messages" #div>
+    </div>
+    <mat-form-field>
+        <mat-label>Message</mat-label>
+        <input matInput type="text" [(ngModel)]="message" (keyup.enter)="sendToServer($event)" />
+        <button matSuffix mat-icon-button type="button" aria-label="Clear" (click)="clearMessage()">
+            <mat-icon>clear</mat-icon>
+        </button>
+        <button matSuffix mat-icon-button type="button" aria-label="Clear" (click)="sendToServer($event)">
+            <mat-icon>check</mat-icon>
+        </button>
+        <mat-hint>Send any message to start chatting!</mat-hint>
+    </mat-form-field>
+</app-container>

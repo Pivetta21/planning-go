@@ -19,7 +19,7 @@ func HandleRoomConnection(w http.ResponseWriter, r *http.Request) {
 
 	upgrader.CheckOrigin = func(r *http.Request) bool {
 		origin := r.Header.Get("Origin")
-		allowedOrigins := []string{"http://localhost:63342"}
+		allowedOrigins := []string{"http://localhost:4200"}
 		return slices.Contains(allowedOrigins, origin)
 	}
 

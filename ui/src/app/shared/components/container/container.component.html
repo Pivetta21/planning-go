@@ -3,13 +3,13 @@
         <div class="nav-menu">
             <h1 class="mat-headline-5" style="text-align: center;">Planning Go</h1>
 
-            <a mat-stroked-button color="link" type="button" routerLink="/profile" routerLinkActive="active"
-                ariaCurrentWhenActive="page">Profile</a>
+            <a *ngFor="let route of routes" mat-stroked-button color="link" type="button" [routerLink]="route.link"
+                routerLinkActive="active" ariaCurrentWhenActive="page">
+                {{route.name}}
+            </a>
 
-            <a mat-stroked-button color="link" type="button" routerLink="/session" routerLinkActive="active"
-                ariaCurrentWhenActive="page">Session</a>
-
-            <button mat-flat-button color="accent" type="button" (click)="logout()" [disabled]="isLogoutLoading">Logout</button>
+            <button mat-flat-button color="accent" type="button" (click)="logout()"
+                [disabled]="isLogoutLoading">Logout</button>
         </div>
     </mat-sidenav>
     <mat-sidenav-content class="content">

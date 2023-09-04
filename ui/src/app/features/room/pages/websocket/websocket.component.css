@@ -1,0 +1,31 @@
+mat-form-field {
+    width: 100%;
+}
+
+.messages {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 78px);
+}
+
+.message {
+    background-color: rgb(194, 214, 255);
+    padding: 12px 16px;
+    border-radius: 4px;
+}
+
+.message.sent {
+    align-self: flex-end;
+}
+
+.message.sent::after {
+    content: ' (you)';
+}
+
+.message.received {
+    align-self: flex-start;
+}
+
+.message.received::before {
+    content: '(member) ';
+}
